@@ -78,7 +78,7 @@ logs/
 backtest_results/
 *.csv
 *.json
-!config/*.json
+!config/default_config.json
 
 # Temporary files
 /tmp/
