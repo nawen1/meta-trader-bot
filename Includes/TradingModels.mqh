@@ -100,6 +100,7 @@ public:
     void IdentifyFractals(ENUM_TIMEFRAMES timeframe = PERIOD_M15);
     bool IsFractalValid(const SFractalPoint &fractal);
     double GetFractalTP(const SEntrySignal &signal);
+    int CalculateFractalStrength(int index, const double &array[], bool isHigh);
     
     //--- Order block methods
     void IdentifyOrderBlocks();
@@ -477,7 +478,7 @@ void CTradingModels::IdentifyFractals(ENUM_TIMEFRAMES timeframe = PERIOD_M15)
             fractal.time = iTime(Symbol(), timeframe, i);
             fractal.isHigh = true;
             fractal.isValid = true;
-            fractal.strength = CalculateFractalStrength(i, high, true);
+            fractal.strength = this.CalculateFractalStrength(i, high, true);
             
             int size = ArraySize(m_fractals);
             ArrayResize(m_fractals, size + 1);
@@ -492,7 +493,7 @@ void CTradingModels::IdentifyFractals(ENUM_TIMEFRAMES timeframe = PERIOD_M15)
             fractal.time = iTime(Symbol(), timeframe, i);
             fractal.isHigh = false;
             fractal.isValid = true;
-            fractal.strength = CalculateFractalStrength(i, low, false);
+            fractal.strength = this.CalculateFractalStrength(i, low, false);
             
             int size = ArraySize(m_fractals);
             ArrayResize(m_fractals, size + 1);
@@ -504,7 +505,7 @@ void CTradingModels::IdentifyFractals(ENUM_TIMEFRAMES timeframe = PERIOD_M15)
 //+------------------------------------------------------------------+
 //| Calculate fractal strength                                     |
 //+------------------------------------------------------------------+
-int CalculateFractalStrength(int index, const double &array[], bool isHigh)
+int CTradingModels::CalculateFractalStrength(int index, const double &array[], bool isHigh)
 {
     int strength = 0;
     int period = 3;

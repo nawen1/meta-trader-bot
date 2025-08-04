@@ -9,6 +9,7 @@
 #property description "Professional MetaTrader 5 Trading Bot with Advanced Risk Management"
 
 //--- Include necessary modules
+#include "Includes/Configuration.mqh"
 #include "Includes/RiskManager.mqh"
 #include "Includes/TimeframeAnalysis.mqh"
 #include "Includes/TradingModels.mqh"
@@ -181,6 +182,12 @@ bool InitializeModules()
         Print("Failed to initialize Utils");
         return false;
     }
+    
+    //--- Set utils reference for all modules
+    g_tfAnalysis.SetUtils(&g_utils);
+    g_tradingModels.SetUtils(&g_utils);
+    g_positionManager.SetUtils(&g_utils);
+    g_positionManager.SetVolatilityMultiplier(InpVolatilityMultiplier);
     
     return true;
 }
