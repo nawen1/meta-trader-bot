@@ -1,135 +1,232 @@
-# KAIZEN Professional MetaTrader 5 Trading Bot
+# KAIZEN - Meta Trader Bot (Unified)
 
-## Overview
-This is a professional MetaTrader 5 Expert Advisor (EA) designed for automated trading with advanced risk management, multi-timeframe analysis, and sophisticated trading models. The bot implements institutional-grade trading strategies with comprehensive reporting and risk controls.
+**Advanced MetaTrader 5 Trading Bot with Multi-Platform Integration**
 
-## Features
+This repository contains the unified implementation of 6 MetaTrader 5 related pull requests, merged into a single comprehensive trading system.
 
-### 🎯 Core Functionality
-- **Multi-Timeframe Analysis**: Uses H4/D1 for market context and M1/M5 for precise entries
-- **Advanced Risk Management**: Dynamic lot sizing with automatic risk adjustment (10% → 5% → 2% → 1%)
-- **Professional Trading Models**: Liquidity sweeps, Fibonacci retracements, fractals, and order blocks
-- **Dynamic TP/SL Management**: Up to 3 take profit levels with automatic stop loss adjustment
-- **Volatility Protection**: Automatic SL adjustment during high volatility periods
+## 🚀 Unified Features
 
-### 📊 Trading Models
-1. **Liquidity Sweep Detection**: Identifies and trades institutional liquidity grabs
-2. **Fibonacci Retracements**: Trades 50%-61.8% retracement levels with precision
-3. **Fractal Analysis**: Exploits 1-15 minute fractal breaks with dynamic TP placement
-4. **Order Block Recognition**: Trades from virgin institutional order blocks
-5. **Invalidation Logic**: Prevents trades when conflicting liquidity zones exist
+### 📊 Multi-Platform Integration
+- **MetaTrader 5** - Advanced risk management and automated trading
+- **TradingView** - Pine Script compatibility with real-time analysis
+- **Python Framework** - Complete autonomous trading system
 
-### 🛡️ Risk Management
-- **Dynamic Lot Sizing**: Calculates position size based on account risk percentage
-- **Margin Validation**: Ensures sufficient margin before trade execution
-- **Risk Adjustment**: Automatically reduces risk when margin is insufficient
-- **Drawdown Protection**: Real-time drawdown monitoring and alerts
-- **Volatility Adaptation**: Widens stops during high volatility periods
+### 🧠 Advanced Analysis Engine
+- **Multi-Timeframe Analysis** with strict higher timeframe prioritization
+- **Autonomous Pattern Recognition** - Independent fractal and structure detection
+- **Advanced Trap Detection** - Sophisticated liquidity sweep and trap analysis
+- **BTCUSD Specialized Strategies** - Crypto-specific entry refinements
+- **Change of Character (CHOCH)** detection with market structure analysis
 
-### 📈 Position Management
-- **Triple Take Profit**: TP1 (1:1), TP2 (1:2), TP3 (1:3) with partial closures
-- **Breakeven Management**: Moves SL to breakeven after TP1
-- **Risk Elimination**: Moves SL to TP2 when TP2 is hit (no-risk TP3)
-- **Volatility SL**: Adjusts stop loss distance based on market volatility
-- **Fractal TP**: Uses fractal origins for optimal take profit placement
+### ⚡ Key Capabilities
 
-### 📊 Professional Reporting
-- **Real-time Statistics**: Win rate, profit factor, drawdown tracking
-- **Performance Metrics**: Sharpe ratio, Sortino ratio, Calmar ratio
-- **Model Analytics**: Individual performance tracking for each trading model
-- **Automated Reports**: Daily, weekly, and monthly performance summaries
-- **Risk Alerts**: Push notifications for high drawdown or margin issues
+#### From PR #1 - MetaTrader 5 Integration
+- Advanced risk management with trailing stops
+- Multi-tier take profit levels (TP1: 80%, TP2: 20%, TP3: 0%)
+- Dynamic position sizing based on account balance
+- Daily loss limits and exposure control
 
-### 🎨 Visual Indicators
-- **Entry Arrows**: Clear buy/sell signals with model identification
-- **TP/SL Lines**: Transparent lines showing all take profit and stop loss levels
-- **Model Labels**: Text labels indicating which trading model triggered the entry
-- **Clean Design**: Transparent (50%) lines that don't clutter the chart
+#### From PR #2 - TradingView Pine Script
+- Complete Pine Script implementation (`kaizen_trading_strategy.pine`)
+- Real-time pattern recognition and alerts
+- Configurable visual overlays and statistics
+- Mobile-compatible TradingView integration
 
-## File Structure
+#### From PR #3 - Multi-Timeframe Analysis
+- Higher timeframe context analysis (1D, 4H, 1H)
+- Lower timeframe precision entries (15M, 5M, 1M)  
+- Autonomous liquidity zone detection
+- Independent fractal identification without presets
 
+#### From PR #4 & #5 - Advanced Trap Detection
+- Distance-based trap identification using liquidity analysis
+- Safe entry point validation preventing risky trades
+- Multi-type trap detection (bull, bear, liquidity, induction traps)
+- Model 2 alignment checks with pullback validation
+
+#### From PR #6 - BTCUSD Refined Strategies
+- Structure break detection with strength classification
+- Clean zone analysis with minimal price overlap
+- Dynamic trailing stops for crypto volatility
+- Specialized entry strategies for BTCUSD
+
+#### From PR #7 - Higher Timeframe Prioritization
+- Strict institutional alignment (D1 > H4 > H1 > M15 > M5)
+- Smart money flow tracking
+- Conflict detection and resolution
+- Ensures all trades align with higher timeframe bias
+
+## 🛠️ Installation & Setup
+
+### Quick Start
+
+1. **Clone the repository**:
+```bash
+git clone https://github.com/nawen1/meta-trader-bot.git
+cd meta-trader-bot
 ```
-ProfessionalTradingBot.mq5          # Main EA file
-Includes/
-├── Utils.mqh                       # Common utilities and structures
-├── RiskManager.mqh                 # Risk and money management
-├── TimeframeAnalysis.mqh           # Multi-timeframe market analysis
-├── TradingModels.mqh               # Trading pattern recognition
-├── PositionManager.mqh             # Position and TP/SL management
-└── ReportManager.mqh               # Statistics and reporting
-Test.mq5                            # Module testing script
+
+2. **Install dependencies**:
+```bash
+pip install -r requirements.txt
 ```
 
-## Installation Instructions
+3. **Run the unified demo**:
+```bash
+python demo_unified.py
+```
 
-1. **Copy Files**: Place all files in your MetaTrader 5 data folder:
-   ```
-   MT5_Data_Folder/MQL5/Experts/KAIZEN/
-   ```
+### TradingView Pine Script Setup
 
-2. **Compile**: Open MetaEditor and compile `ProfessionalTradingBot.mq5`
+1. Copy the content of `kaizen_trading_strategy.pine`
+2. Open TradingView Pine Editor (Alt+E)
+3. Paste the code and save
+4. Add to chart and configure alerts
 
-3. **Test**: Run `Test.mq5` script to verify all modules work correctly
+See `INSTALACION_RAPIDA.md` for detailed TradingView setup instructions.
 
-4. **Attach**: Drag the EA to your chart and configure parameters
+## 📊 Usage Examples
 
-## Configuration Parameters
+### Basic Analysis
+```python
+from src.kaizen_trading_bot import KaizenTradingBot
+from utils.config import get_config
+
+# Initialize unified bot
+bot = KaizenTradingBot(account_balance=10000.0)
+
+# Analyze with multi-timeframe data
+timeframes_data = {
+    '1d': daily_data,     # Higher timeframe context
+    '4h': h4_data,        # Confirmation
+    '1h': h1_data,        # Entry zone identification  
+    '15m': m15_data,      # Precise entry timing
+    '5m': m5_data         # Scalping opportunities
+}
+
+# Comprehensive analysis
+results = bot.analyze_market('EURUSD', timeframes_data)
+
+# Get trading recommendation
+recommendation = results['trading_recommendation']
+print(f"Action: {recommendation['action']}")
+print(f"Direction: {recommendation['direction']}")
+print(f"Confidence: {recommendation['confidence']:.2f}")
+```
+
+### Advanced Configuration
+```python
+from utils.config import update_config
+
+# Customize for aggressive trading
+config = update_config(
+    max_risk_per_trade=0.03,        # 3% risk per trade
+    min_trap_confidence=0.8,        # Higher trap detection threshold
+    strict_htf_priority=True,       # Enforce HTF alignment
+    trap_detection_enabled=True     # Enable advanced trap detection
+)
+
+bot = KaizenTradingBot(config=config)
+```
+
+## 🎯 Merged Pull Request Features
+
+| PR | Title | Key Features Integrated |
+|----|-------|------------------------|
+| #1 | KAIZEN Professional MetaTrader 5 Bot | Risk management, trailing stops, MT5 integration |
+| #2 | Comprehensive Pine Script Strategy | TradingView compatibility, alerts, visual analysis |
+| #3 | Multi-Timeframe Trading Bot | HTF context, autonomous analysis, fractal detection |
+| #4 | Advanced Trap Identification | Sophisticated trap detection, safe entry validation |
+| #5 | Comprehensive Trap Analysis | Distance-based analysis, Model 2 alignment, clean zones |
+| #6 | BTCUSD Refined Entry Strategies | Crypto-specific strategies, dynamic risk management |
+| #7 | Strict HTF Prioritization | Institutional alignment, smart money flow tracking |
+
+## 🔬 Testing & Validation
+
+Run the comprehensive test suite:
+```bash
+python -m pytest tests/ -v
+```
+
+Or run individual demos:
+```bash
+python demo_unified.py          # Full feature demonstration
+python examples/mt5_demo.py     # MetaTrader 5 specific features
+python examples/btc_demo.py     # BTCUSD specialized strategies
+```
+
+## 📈 Performance Features
 
 ### Risk Management
-- **Initial Risk Percentage**: 10.0% (adjusts down automatically if needed)
-- **Minimum Risk Percentage**: 1.0% (lowest risk level before stopping trades)
-- **Auto Adjust Risk**: True (enables automatic risk reduction)
+- **Position Sizing**: Dynamic calculation based on account balance and risk tolerance
+- **Trailing Stops**: Automatic stop-loss adjustments to protect profits
+- **Multi-Tier Profits**: TP1 (1%), TP2 (2.5%), TP3 (5%) with customizable allocation
+- **Daily Limits**: Prevent excessive losses with configurable daily limits
 
-### Timeframes
-- **Primary Context TF**: H4 (higher timeframe trend analysis)
-- **Secondary Context TF**: D1 (additional trend confirmation)
-- **Primary Entry TF**: M1 (precise entry timing)
-- **Secondary Entry TF**: M5 (entry confirmation)
+### Signal Quality
+- **Confluence Analysis**: Multiple factors must align before signal generation
+- **Trap Avoidance**: Advanced detection prevents trading in manipulative conditions
+- **HTF Alignment**: All trades must align with higher timeframe bias
+- **Confidence Scoring**: Each signal includes confidence score (0-1)
 
-### Trading Models
-- **Use Liquidity Sweeps**: True (institutional liquidity detection)
-- **Use Fibonacci**: True (retracement trading)
-- **Use Fractals**: True (fractal break trading)
-- **Use Order Blocks**: True (institutional order block trading)
+## 🔧 Configuration Options
 
-### Position Management
-- **Use Triple TP**: True (enables TP1, TP2, TP3)
-- **TP1 Ratio**: 1.0 (1:1 risk:reward)
-- **TP2 Ratio**: 2.0 (1:2 risk:reward)
-- **TP3 Ratio**: 3.0 (1:3 risk:reward)
-- **Move SL to TP2**: True (eliminates risk after TP2)
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `max_risk_per_trade` | 2% | Maximum risk per individual trade |
+| `max_daily_loss` | 5% | Maximum daily loss limit |
+| `fractal_period` | 5 | Period for fractal identification |
+| `min_trap_confidence` | 0.7 | Minimum confidence for trap detection |
+| `strict_htf_priority` | True | Enforce higher timeframe priority |
+| `trap_detection_enabled` | True | Enable advanced trap detection |
 
-### Validation
-- **Volatility Multiplier**: 1.5 (SL adjustment threshold)
-- **Confirmation Bars**: 2 (required signal confirmation)
+## 🚦 Trading Workflow
 
-### Notifications
-- **Enable Push Notifications**: True (real-time trade alerts)
-- **Enable Email Reports**: False (weekly/monthly email reports)
-- **Draw Visual Indicators**: True (chart visualization)
+1. **Higher Timeframe Analysis**: Establish market bias on D1/4H/1H
+2. **Structure Assessment**: Identify key levels, fractals, and market character
+3. **Trap Detection**: Screen for potential manipulation and unsafe conditions
+4. **Entry Refinement**: Find precise entries on lower timeframes (15M/5M)
+5. **Risk Calculation**: Size positions and set stops/targets
+6. **Execution**: Only trade when all conditions align
 
-## Risk Warnings
+## 📋 Conflict Resolution
 
-⚠️ **Important Risk Disclosures**:
-- Past performance does not guarantee future results
-- Trading involves substantial risk of loss
-- Only trade with capital you can afford to lose
-- This bot is designed for experienced traders
-- Always test on demo accounts first
-- Monitor drawdown and adjust risk accordingly
+During the merge process, conflicts between overlapping implementations were resolved by:
 
-## Support and Updates
+- **Prioritizing higher-quality code** with better error handling
+- **Combining complementary features** rather than duplicating functionality
+- **Maintaining backward compatibility** with existing configurations
+- **Preserving the strengths** of each individual PR
+- **Creating unified interfaces** for consistent usage
 
-For support, updates, or questions about the KAIZEN Professional Trading Bot:
-- Review the code comments for implementation details
-- Test thoroughly on demo accounts
-- Start with conservative risk settings
-- Monitor performance and adjust parameters as needed
+## ⚠️ Important Notes
 
-## License
+- **Test thoroughly** before using with real capital
+- **Start with demo accounts** to validate performance
+- **Understand risk management** - trading involves substantial risk
+- **Monitor performance** and adjust parameters as needed
+- **Keep higher timeframe bias** - never trade against institutional flow
 
-Copyright 2024, KAIZEN Trading Systems. Professional trading bot for MetaTrader 5.
+## 🤝 Contributing
+
+This unified implementation represents the merger of 6 separate pull requests. For future contributions:
+
+1. Fork the repository
+2. Create a feature branch
+3. Test thoroughly with the existing unified framework
+4. Submit a pull request with clear documentation
+
+## 📄 License
+
+This project combines work from multiple pull requests under MIT License.
+
+## 📞 Support
+
+For questions about the unified implementation:
+- Review the comprehensive documentation in each component
+- Check the demo scripts for usage examples
+- Refer to individual PR documentation for specific features
 
 ---
 
-**Developed with maximum professionalism and concentration to create an impeccable and phenomenal trading solution.**
+**KAIZEN** - Continuous improvement through advanced technology and unified development.
