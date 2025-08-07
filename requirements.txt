@@ -1,3 +1,9 @@
+copilot/fix-a472e9a1-ed5c-4ecc-aa4f-d8d6469e04b4
+pandas>=1.3.0
+numpy>=1.21.0
+ta>=0.10.0
+python-dateutil>=2.8.0
+
 copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
 numpy>=1.21.0
 pandas>=1.3.0
@@ -29,5 +35,6 @@ main
 python-dotenv>=1.0.0
 dataclasses-json>=0.6.0
 typing-extensions>=4.7.0
+main
 main
 main
