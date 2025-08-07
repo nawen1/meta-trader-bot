@@ -1,3 +1,4 @@
+HEAD
 copilot/fix-a472e9a1-ed5c-4ecc-aa4f-d8d6469e04b4
 *.json
 __pycache__/
@@ -6,10 +7,14 @@ __pycache__/
 copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
 
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
+main
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+HEAD
+# Distribution / packaging
 
 # C extensions
 *.so
@@ -26,6 +31,7 @@ copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
 
 main
 main
+main
 .Python
 build/
 develop-eggs/
@@ -39,6 +45,17 @@ parts/
 sdist/
 var/
 wheels/
+HEAD
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+
 copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
 
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
@@ -152,10 +169,31 @@ dmypy.json
 # IDEs
 main
 main
+main
 .vscode/
 .idea/
 *.swp
 *.swo
+HEAD
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
 *~
 
 copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
@@ -222,6 +260,7 @@ backtest_results/
 /tmp/
 *.tmp
 *.temp
+main
 main
 main
 main
