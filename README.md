@@ -1,3 +1,15 @@
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+# Meta Trader Bot
+
+KAIZEN - Advanced Trading Bot with sophisticated trap analysis and risk management.
+
+## Features
+
+- **Advanced Trap Recognition**: Identifies traps from distance based on liquidity analysis
+- **Strict Entry Validation**: Operates only on clear entry points aligned with trading models
+- **Dynamic Risk Management**: Implements trailing stops and position management (TP1/TP2/TP3)
+- **Structural Analysis**: Multi-timeframe analysis with clean zone identification
+
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
 # Meta Trading Bot - Advanced Trap Identification & Risk Management
 
@@ -26,10 +38,23 @@ An intelligent trading bot that specializes in identifying and safely operating 
 - **Configurable Parameters**: Adjustable risk, confidence, and strategy settings
 - **Trap Trading Toggle**: Can enable/disable trap trading operations
 - **Force Trade Prevention**: Prevents entering trades without clear setups
+main
 
 ## Installation
 
 ```bash
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+pip install -r requirements.txt
+```
+
+## Usage
+
+```python
+from meta_trader_bot import TradingBot
+
+bot = TradingBot()
+bot.start()
+
 # Clone the repository
 git clone https://github.com/nawen1/meta-trader-bot.git
 cd meta-trader-bot
@@ -262,9 +287,17 @@ config = BotConfig(
 
 # Initialize bot with custom config
 bot = MetaTradingBot(config=config, account_balance=10000.0)
+main
 ```
 
 ## Architecture
+
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+- `core/`: Main trading bot orchestrator
+- `analyzers/`: Market analysis modules (trap detection, structural analysis)
+- `managers/`: Risk and trade management modules  
+- `utils/`: Utility functions and helpers
+- `config/`: Configuration files and settings
 
 The bot is structured into several key modules:
 
@@ -680,4 +713,5 @@ main
 git fetch origin pull/3/head:pr-3
 git checkout main
 git merge pr-3
+main
 main

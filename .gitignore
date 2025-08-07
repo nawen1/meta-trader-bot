@@ -1,3 +1,5 @@
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -9,11 +11,15 @@ __pycache__/
 
 # Distribution / packaging
 
+main
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+
+main
 main
 .Python
 build/
@@ -28,16 +34,22 @@ parts/
 sdist/
 var/
 wheels/
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
 
 share/python-wheels/
+main
 main
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
+main
 # PyInstaller
 *.manifest
 *.spec
@@ -57,6 +69,8 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
 
 # Translations
 *.mo
@@ -80,11 +94,15 @@ docs/_build/
 # PyBuilder
 target/
 
+main
 # Jupyter Notebook
 .ipynb_checkpoints
 
 # pyenv
 .python-version
+
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+# Environment variables
 
 # celery beat schedule file
 celerybeat-schedule
@@ -96,6 +114,7 @@ celerybeat-schedule
 
 # Virtual environments
 main
+main
 .env
 .venv
 env/
@@ -103,6 +122,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+# IDE
 
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
 # Spyder project settings
@@ -124,11 +146,14 @@ dmypy.json
 
 # IDEs
 main
+main
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
 
 copilot/fix-ba9cb030-7087-4abc-ac1e-cd1a8563403f
 # Trading specific
@@ -164,6 +189,7 @@ data/
 logs/
 backtest_results/
 
+main
 # OS
 .DS_Store
 .DS_Store?
@@ -173,8 +199,23 @@ backtest_results/
 ehthumbs.db
 Thumbs.db
 
+copilot/fix-63aa93a4-72a5-471a-a5ef-b3c5a75cd0ff
+# Trading data
+data/
+logs/
+backtest_results/
+*.csv
+*.json
+!config/default_config.json
+
+# Temporary files
+/tmp/
+*.tmp
+*.log
+
 # Temporary files
 /tmp/
 *.tmp
 *.temp
+main
 main
