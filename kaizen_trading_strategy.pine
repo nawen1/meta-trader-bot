@@ -1,0 +1,384 @@
+//@version=5
+indicator("KAIZEN - Advanced Trading Strategy", "KAIZEN", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+// ================================================================================================
+// CONFIGURACIÓN DE PARÁMETROS DINÁMICOS
+// ================================================================================================
+
+// Configuración General
+general_group = "⚙️ CONFIGURACIÓN GENERAL"
+show_patterns = input.bool(true, "Mostrar Patrones", group=general_group)
+show_statistics = input.bool(true, "Mostrar Estadísticas", group=general_group)
+alert_enabled = input.bool(true, "Activar Alertas", group=general_group)
+
+// Configuración de Fibonacci
+fib_group = "📏 RETROCESOS DE FIBONACCI"
+fib_enabled = input.bool(true, "Activar Fibonacci", group=fib_group)
+fib_level_1 = input.float(0.382, "Nivel 38.2%", minval=0, maxval=1, step=0.001, group=fib_group)
+fib_level_2 = input.float(0.50, "Nivel 50%", minval=0, maxval=1, step=0.001, group=fib_group)
+fib_level_3 = input.float(0.618, "Nivel 61.8%", minval=0, maxval=1, step=0.001, group=fib_group)
+fib_level_4 = input.float(0.786, "Nivel 78.6%", minval=0, maxval=1, step=0.001, group=fib_group)
+fib_lookback = input.int(20, "Lookback para Fibonacci", minval=10, maxval=100, group=fib_group)
+
+// Configuración de Fractales
+fractal_group = "🔺 FRACTALES MENORES"
+fractal_enabled = input.bool(true, "Activar Fractales", group=fractal_group)
+fractal_length = input.int(5, "Longitud de Fractal", minval=3, maxval=15, group=fractal_group)
+fractal_timeframe = input.timeframe("5", "Timeframe de Análisis", group=fractal_group)
+
+// Configuración de Order Blocks
+ob_group = "📦 ORDER BLOCKS"
+ob_enabled = input.bool(true, "Activar Order Blocks", group=ob_group)
+ob_lookback = input.int(50, "Lookback para Order Blocks", minval=20, maxval=200, group=ob_group)
+ob_min_volume = input.float(1.5, "Volumen Mínimo (multiplicador)", minval=1.0, maxval=5.0, step=0.1, group=ob_group)
+
+// Configuración de Liquidez
+liquidity_group = "💧 SACADAS DE LIQUIDEZ"
+liquidity_enabled = input.bool(true, "Activar Detección de Liquidez", group=liquidity_group)
+liquidity_sensitivity = input.float(0.5, "Sensibilidad (%)", minval=0.1, maxval=2.0, step=0.1, group=liquidity_group)
+liquidity_lookback = input.int(100, "Lookback para Liquidez", minval=50, maxval=300, group=liquidity_group)
+
+// Configuración Visual
+visual_group = "🎨 CONFIGURACIÓN VISUAL"
+bullish_color = input.color(color.new(color.green, 80), "Color Alcista", group=visual_group)
+bearish_color = input.color(color.new(color.red, 80), "Color Bajista", group=visual_group)
+fib_color = input.color(color.new(color.blue, 70), "Color Fibonacci", group=visual_group)
+ob_color = input.color(color.new(color.orange, 80), "Color Order Blocks", group=visual_group)
+
+// ================================================================================================
+// VARIABLES Y ARRAYS PARA ALMACENAR DATOS
+// ================================================================================================
+
+var array<float> fractal_highs = array.new<float>()
+var array<float> fractal_lows = array.new<float>()
+var array<int> fractal_high_bars = array.new<int>()
+var array<int> fractal_low_bars = array.new<int>()
+
+var array<box> order_blocks = array.new<box>()
+var array<line> fib_lines = array.new<line>()
+var array<label> pattern_labels = array.new<label>()
+
+// Variables para estadísticas
+var int total_patterns = 0
+var int fib_patterns = 0
+var int fractal_patterns = 0
+var int ob_patterns = 0
+var int liquidity_sweeps = 0
+
+// ================================================================================================
+// FUNCIONES AUXILIARES
+// ================================================================================================
+
+// Función para detectar fractales
+fractal_high(length) =>
+    high[length] > high[length+1] and high[length] > high[length+2] and 
+    high[length] > high[length-1] and high[length] > high[length-2]
+
+fractal_low(length) =>
+    low[length] < low[length+1] and low[length] < low[length+2] and 
+    low[length] < low[length-1] and low[length] < low[length-2]
+
+// Función para calcular el promedio de volumen
+avg_volume(length) =>
+    ta.sma(volume, length)
+
+// Función para detectar order blocks vírgenes
+is_virgin_order_block(index, is_bullish) =>
+    if is_bullish
+        // Para order block alcista, verificar que el precio no haya retestado
+        current_low = low[index]
+        for i = 0 to index - 1
+            if low[i] <= current_low
+                false
+        true
+    else
+        // Para order block bajista, verificar que el precio no haya retestado
+        current_high = high[index]
+        for i = 0 to index - 1
+            if high[i] >= current_high
+                false
+        true
+
+// ================================================================================================
+// DETECCIÓN DE FRACTALES MENORES
+// ================================================================================================
+
+if fractal_enabled
+    // Detectar fractales altos
+    if fractal_high(fractal_length)
+        if array.size(fractal_highs) > 10
+            array.shift(fractal_highs)
+            array.shift(fractal_high_bars)
+        array.push(fractal_highs, high[fractal_length])
+        array.push(fractal_high_bars, bar_index - fractal_length)
+        
+        if show_patterns
+            label.new(bar_index - fractal_length, high[fractal_length], "▼", 
+                     color=bearish_color, style=label.style_label_down, 
+                     size=size.small, tooltip="Fractal Alto")
+        
+        fractal_patterns += 1
+        total_patterns += 1
+    
+    // Detectar fractales bajos
+    if fractal_low(fractal_length)
+        if array.size(fractal_lows) > 10
+            array.shift(fractal_lows)
+            array.shift(fractal_low_bars)
+        array.push(fractal_lows, low[fractal_length])
+        array.push(fractal_low_bars, bar_index - fractal_length)
+        
+        if show_patterns
+            label.new(bar_index - fractal_length, low[fractal_length], "▲", 
+                     color=bullish_color, style=label.style_label_up, 
+                     size=size.small, tooltip="Fractal Bajo")
+        
+        fractal_patterns += 1
+        total_patterns += 1
+
+// ================================================================================================
+// DETECCIÓN DE RETROCESOS DE FIBONACCI
+// ================================================================================================
+
+if fib_enabled and array.size(fractal_highs) > 0 and array.size(fractal_lows) > 0
+    last_high = array.get(fractal_highs, array.size(fractal_highs) - 1)
+    last_low = array.get(fractal_lows, array.size(fractal_lows) - 1)
+    last_high_bar = array.get(fractal_high_bars, array.size(fractal_high_bars) - 1)
+    last_low_bar = array.get(fractal_low_bars, array.size(fractal_low_bars) - 1)
+    
+    // Determinar tendencia
+    is_uptrend = last_low_bar > last_high_bar
+    
+    if is_uptrend and last_high > last_low
+        // Tendencia alcista - calcular retrocesos desde el alto
+        range_val = last_high - last_low
+        
+        // Dibujar niveles de Fibonacci
+        fib_382 = last_high - (range_val * fib_level_1)
+        fib_50 = last_high - (range_val * fib_level_2)
+        fib_618 = last_high - (range_val * fib_level_3)
+        fib_786 = last_high - (range_val * fib_level_4)
+        
+        // Verificar si estamos cerca de un nivel de Fibonacci
+        current_price = close
+        tolerance = range_val * 0.01 // 1% de tolerancia
+        
+        if math.abs(current_price - fib_50) <= tolerance and show_patterns
+            label.new(bar_index, current_price, "FIB 50%", 
+                     color=fib_color, style=label.style_label_left, 
+                     size=size.normal, tooltip="Retroceso Fibonacci 50%")
+            fib_patterns += 1
+            total_patterns += 1
+            
+            if alert_enabled
+                alert("KAIZEN: Precio en Fibonacci 50% - Posible zona de entrada", alert.freq_once_per_bar)
+
+// ================================================================================================
+// DETECCIÓN DE ORDER BLOCKS VÍRGENES
+// ================================================================================================
+
+if ob_enabled
+    // Buscar order blocks alcistas (después de una caída fuerte)
+    volume_threshold = avg_volume(20) * ob_min_volume
+    
+    for i = 1 to math.min(ob_lookback, bar_index)
+        if volume[i] >= volume_threshold
+            // Verificar si hay un movimiento significativo después de esta vela
+            body_size = math.abs(close[i] - open[i])
+            next_move = high[i-1] - low[i]
+            
+            if next_move > body_size * 2 and is_virgin_order_block(i, true)
+                // Order block alcista identificado
+                if show_patterns
+                    box.new(bar_index - i - 5, low[i], bar_index, high[i], 
+                            border_color=ob_color, bgcolor=color.new(ob_color, 90),
+                            text="OB Alcista", text_size=size.small)
+                
+                ob_patterns += 1
+                total_patterns += 1
+                break
+
+// ================================================================================================
+// DETECCIÓN DE SACADAS DE LIQUIDEZ
+// ================================================================================================
+
+if liquidity_enabled and array.size(fractal_highs) >= 2 and array.size(fractal_lows) >= 2
+    // Obtener los últimos dos fractales
+    recent_high_1 = array.get(fractal_highs, array.size(fractal_highs) - 1)
+    recent_high_2 = array.get(fractal_highs, array.size(fractal_highs) - 2)
+    recent_low_1 = array.get(fractal_lows, array.size(fractal_lows) - 1)
+    recent_low_2 = array.get(fractal_lows, array.size(fractal_lows) - 2)
+    
+    // Detectar sacada de liquidez alcista (breakout falso al alza)
+    if high > recent_high_1 and close < recent_high_1 * (1 - liquidity_sensitivity / 100)
+        if show_patterns
+            label.new(bar_index, high, "💧 LIQUIDEZ", 
+                     color=color.red, style=label.style_label_down, 
+                     size=size.normal, tooltip="Sacada de Liquidez Alcista")
+        
+        liquidity_sweeps += 1
+        total_patterns += 1
+        
+        if alert_enabled
+            alert("KAIZEN: Sacada de liquidez detectada - Posible reversión", alert.freq_once_per_bar)
+    
+    // Detectar sacada de liquidez bajista (breakout falso a la baja)
+    if low < recent_low_1 and close > recent_low_1 * (1 + liquidity_sensitivity / 100)
+        if show_patterns
+            label.new(bar_index, low, "💧 LIQUIDEZ", 
+                     color=color.lime, style=label.style_label_up, 
+                     size=size.normal, tooltip="Sacada de Liquidez Bajista")
+        
+        liquidity_sweeps += 1
+        total_patterns += 1
+        
+        if alert_enabled
+            alert("KAIZEN: Sacada de liquidez detectada - Posible reversión", alert.freq_once_per_bar)
+
+// ================================================================================================
+// SEÑALES DE ENTRADA Y SALIDA
+// ================================================================================================
+
+// Condiciones de entrada alcista
+bullish_entry = false
+if fractal_enabled and fib_enabled and liquidity_enabled
+    // Entrada alcista: precio cerca de Fibonacci 50% + fractal bajo reciente + sin sacada de liquidez reciente
+    if array.size(fractal_lows) > 0 and array.size(fractal_highs) > 0
+        last_low = array.get(fractal_lows, array.size(fractal_lows) - 1)
+        last_high = array.get(fractal_highs, array.size(fractal_highs) - 1)
+        range_val = last_high - last_low
+        fib_50_level = last_high - (range_val * 0.5)
+        
+        price_near_fib = math.abs(close - fib_50_level) <= (range_val * 0.02)
+        recent_fractal_low = bar_index - array.get(fractal_low_bars, array.size(fractal_low_bars) - 1) <= 10
+        
+        bullish_entry := price_near_fib and recent_fractal_low and close > open
+
+// Condiciones de entrada bajista
+bearish_entry = false
+if fractal_enabled and fib_enabled and liquidity_enabled
+    // Entrada bajista: precio cerca de Fibonacci 50% + fractal alto reciente + sin sacada de liquidez reciente
+    if array.size(fractal_lows) > 0 and array.size(fractal_highs) > 0
+        last_low = array.get(fractal_lows, array.size(fractal_lows) - 1)
+        last_high = array.get(fractal_highs, array.size(fractal_highs) - 1)
+        range_val = last_high - last_low
+        fib_50_level = last_high - (range_val * 0.5)
+        
+        price_near_fib = math.abs(close - fib_50_level) <= (range_val * 0.02)
+        recent_fractal_high = bar_index - array.get(fractal_high_bars, array.size(fractal_high_bars) - 1) <= 10
+        
+        bearish_entry := price_near_fib and recent_fractal_high and close < open
+
+// Visualizar señales de entrada
+if bullish_entry and show_patterns
+    label.new(bar_index, low, "🟢 COMPRA", 
+             color=color.green, style=label.style_label_up, 
+             size=size.large, tooltip="Señal de Entrada Alcista")
+
+if bearish_entry and show_patterns
+    label.new(bar_index, high, "🔴 VENTA", 
+             color=color.red, style=label.style_label_down, 
+             size=size.large, tooltip="Señal de Entrada Bajista")
+
+// Alertas para señales de entrada
+if bullish_entry and alert_enabled
+    alert("KAIZEN: SEÑAL DE COMPRA - Todas las condiciones cumplidas", alert.freq_once_per_bar)
+
+if bearish_entry and alert_enabled
+    alert("KAIZEN: SEÑAL DE VENTA - Todas las condiciones cumplidas", alert.freq_once_per_bar)
+
+// ================================================================================================
+// ESTADÍSTICAS EN PANTALLA
+// ================================================================================================
+
+if show_statistics and barstate.islast
+    // Crear tabla de estadísticas
+    var table stats_table = table.new(position.top_right, 2, 6, 
+                                     bgcolor=color.new(color.white, 90), 
+                                     border_width=1, border_color=color.gray)
+    
+    // Headers
+    table.cell(stats_table, 0, 0, "KAIZEN STATISTICS", text_color=color.black, 
+              text_size=size.normal, bgcolor=color.new(color.blue, 80))
+    table.cell(stats_table, 1, 0, "COUNT", text_color=color.black, 
+              text_size=size.normal, bgcolor=color.new(color.blue, 80))
+    
+    // Datos
+    table.cell(stats_table, 0, 1, "Total Patrones", text_color=color.black, text_size=size.small)
+    table.cell(stats_table, 1, 1, str.tostring(total_patterns), text_color=color.black, text_size=size.small)
+    
+    table.cell(stats_table, 0, 2, "Fractales", text_color=color.black, text_size=size.small)
+    table.cell(stats_table, 1, 2, str.tostring(fractal_patterns), text_color=color.black, text_size=size.small)
+    
+    table.cell(stats_table, 0, 3, "Fibonacci", text_color=color.black, text_size=size.small)
+    table.cell(stats_table, 1, 3, str.tostring(fib_patterns), text_color=color.black, text_size=size.small)
+    
+    table.cell(stats_table, 0, 4, "Order Blocks", text_color=color.black, text_size=size.small)
+    table.cell(stats_table, 1, 4, str.tostring(ob_patterns), text_color=color.black, text_size=size.small)
+    
+    table.cell(stats_table, 0, 5, "Sacadas Liquidez", text_color=color.black, text_size=size.small)
+    table.cell(stats_table, 1, 5, str.tostring(liquidity_sweeps), text_color=color.black, text_size=size.small)
+
+// ================================================================================================
+// MODELO OPERATIVO ACTUAL
+// ================================================================================================
+
+if barstate.islast and show_patterns
+    // Determinar el modelo operativo actual basado en los patrones recientes
+    current_model = "NEUTRO"
+    model_color = color.gray
+    
+    if bullish_entry
+        current_model := "ALCISTA"
+        model_color := color.green
+    else if bearish_entry
+        current_model := "BAJISTA"
+        model_color := color.red
+    else
+        // Analizar tendencia general
+        if array.size(fractal_highs) > 0 and array.size(fractal_lows) > 0
+            last_high = array.get(fractal_highs, array.size(fractal_highs) - 1)
+            last_low = array.get(fractal_lows, array.size(fractal_lows) - 1)
+            last_high_bar = array.get(fractal_high_bars, array.size(fractal_high_bars) - 1)
+            last_low_bar = array.get(fractal_low_bars, array.size(fractal_low_bars) - 1)
+            
+            if last_low_bar > last_high_bar and close > last_high
+                current_model := "TENDENCIA ALCISTA"
+                model_color := color.new(color.green, 50)
+            else if last_high_bar > last_low_bar and close < last_low
+                current_model := "TENDENCIA BAJISTA"
+                model_color := color.new(color.red, 50)
+    
+    // Mostrar modelo operativo actual
+    label.new(bar_index, close, "📊 MODELO: " + current_model, 
+             color=model_color, style=label.style_label_center, 
+             size=size.large, tooltip="Modelo Operativo Actual basado en KAIZEN")
+
+// ================================================================================================
+// ALERTAS ADICIONALES
+// ================================================================================================
+
+// Alerta cuando se forma un patrón completo
+pattern_complete = bullish_entry or bearish_entry or 
+                  (fib_patterns > fib_patterns[1]) or 
+                  (liquidity_sweeps > liquidity_sweeps[1])
+
+if pattern_complete and alert_enabled
+    alert("KAIZEN: Nuevo patrón detectado - Revisar gráfico", alert.freq_once_per_bar)
+
+// ================================================================================================
+// INFORMACIÓN DEL SCRIPT
+// ================================================================================================
+
+if barstate.islast
+    // Mostrar información del script en la esquina inferior izquierda
+    var table info_table = table.new(position.bottom_left, 1, 3, 
+                                    bgcolor=color.new(color.black, 80), 
+                                    border_width=1, border_color=color.white)
+    
+    table.cell(info_table, 0, 0, "KAIZEN TRADING STRATEGY", 
+              text_color=color.white, text_size=size.normal)
+    table.cell(info_table, 0, 1, "Meta Trader Bot Integration", 
+              text_color=color.yellow, text_size=size.small)
+    table.cell(info_table, 0, 2, "v1.0 - Advanced Pattern Recognition", 
+              text_color=color.silver, text_size=size.tiny)
