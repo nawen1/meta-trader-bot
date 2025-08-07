@@ -1,0 +1,27 @@
+{
+  "trading": {
+    "max_risk_per_trade": 0.02,
+    "tp1_ratio": 1.0,
+    "tp2_ratio": 2.0,
+    "tp3_ratio": 3.0,
+    "tp1_size_percent": 0.5,
+    "tp2_size_percent": 0.3,
+    "tp3_size_percent": 0.2,
+    "trailing_stop_distance": 0.5,
+    "min_trap_confidence": 0.7,
+    "min_entry_confidence": 0.8,
+    "max_distance_to_liquidity": 0.002,
+    "timeframes_to_analyze": ["15m", "1h", "4h"]
+  },
+  "risk_management": {
+    "max_total_risk_percent": 10.0,
+    "max_simultaneous_positions": 5,
+    "account_balance": 10000.0
+  },
+  "analysis": {
+    "boss_structure_lookback": 50,
+    "induction_lookback": 20,
+    "liquidity_threshold": 1.5,
+    "structure_cache_minutes": 15
+  }
+}
