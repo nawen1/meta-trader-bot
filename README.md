@@ -1,4 +1,11 @@
 HEAD
+## Instalación rápida
+
+- Descarga el paquete listo para MT5: revisa la última release y baja "KAIZEN BOT 1.0.zip".
+- Copia la carpeta dentro de MQL5/Experts/ y compila ProfessionalTradingBot.mq5 en MetaEditor.
+
+Para empaquetar manualmente, usa el workflow "Release KAIZEN BOT 1.0" (Actions > Run workflow) y descarga el artifact resultante.
+
 # BTCUSD Meta Trading Bot
 
 An advanced trading bot for BTCUSD with refined logic based on the latest principles for analyzing and operating trades. The bot implements sophisticated entry strategies, dynamic risk management, and strict validation to ensure high-probability setups.

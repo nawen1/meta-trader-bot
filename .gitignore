@@ -264,3 +264,20 @@ main
 main
 main
 main
+
+# MetaTrader build outputs
+*.ex5
+*.ex4
+*.mqproj
+*.aps
+*.log
+
+# Common MT5 folders (when repo is placed under Data Folder)
+MQL5/Logs/
+MQL5/Reports/
+MQL5/Profiles/
+MQL5/Tester/Agent*
+
+# OS junk
+.DS_Store
+Thumbs.db
